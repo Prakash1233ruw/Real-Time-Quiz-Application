@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pp.dao.UserDao;
@@ -24,11 +25,14 @@ public class UserServiceImpl implements IUserService,UserDetailsService {
 	 UserDao userDao;
 	@Autowired
 	UserInterface userInterface;
+	
+	private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
 	@Override
 	public ResponseEntity<String> registerUser(User user) {
 		String name = userDao.save(user).getUserName();
+		user.setPassword(encoder.encode(user.getPassword()));
 		String message = name+" You are Successfully registered With US";
-		
+		System.out.println(user.getPassword());
 		return new ResponseEntity<String>(message,HttpStatus.OK);
 	}
 	@Override
